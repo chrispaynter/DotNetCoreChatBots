@@ -4,6 +4,7 @@ using Paynter.FacebookMessenger.Models.Webhooks;
 using Paynter.FacebookMessenger.Services;
 using Microsoft.Extensions.Logging;
 using Paynter.WitAi.Services;
+using System.Net;
 
 namespace DotNetCoreChatBots.Controllers
 {
@@ -11,12 +12,13 @@ namespace DotNetCoreChatBots.Controllers
     {
         private FacebookMessengerService _facebookMessengerService;
         private WitAiService _witAiService;
+        private ILogger<FacebookWebhookController> _logger;
 
         public FacebookWebhookController(ILogger<FacebookWebhookController> logger, FacebookMessengerService facebookMessengerService, WitAiService witAiService)
         {
             _facebookMessengerService = facebookMessengerService;
             _witAiService = witAiService;
-
+            _logger = logger;
             _facebookMessengerService.MessageRecieved += MessageRecieved;
         }
 
@@ -27,7 +29,9 @@ namespace DotNetCoreChatBots.Controllers
             {
                 return hub.Challenge;
             }
-            return NotFound();
+            _logger.LogInformation("Failed webhook subscription attempt", hub);
+            HttpContext.Response.StatusCode = 403;
+            return null;
         }
 
         [HttpPost("api/facebookwebhook")]
