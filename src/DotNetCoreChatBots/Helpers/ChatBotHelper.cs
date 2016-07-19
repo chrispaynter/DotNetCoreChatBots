@@ -3,6 +3,7 @@ using DotNetCoreChatBots.Controllers;
 using Microsoft.Extensions.Logging;
 using Paynter.FacebookMessenger.Models.Webhooks;
 using Paynter.FacebookMessenger.Services;
+using Paynter.WitAi.Collections;
 using Paynter.WitAi.Exceptions;
 using Paynter.WitAi.Models;
 using Paynter.WitAi.Services;
