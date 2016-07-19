@@ -1,0 +1,6 @@
+[submodule "lib/DotNetCoreFacebookMessenger"]
+	path = lib/DotNetCoreFacebookMessenger
+	url = git@github.com:chrispaynter/DotNetCoreFacebookMessenger.git
+[submodule "lib/DotNetCoreWitAi"]
+	path = lib/DotNetCoreWitAi
+	url = git@github.com:chrispaynter/DotNetCoreWitAi.git

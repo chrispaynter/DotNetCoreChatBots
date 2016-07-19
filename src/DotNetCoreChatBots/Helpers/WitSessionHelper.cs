@@ -22,18 +22,18 @@ namespace DotNetCoreChatBots
     {
         private static List<WitSession> _sessions = new List<WitSession>();
 
-        public static WitSession GetSession(string senderId)
+        public static WitSession FindSession(string senderId)
         {
             return _sessions.FirstOrDefault(u => u.FacebookSenderId.Equals(senderId));
         }
 
-        public static WitSession CreateSession(string senderId)
+        public static WitSession FindOrCreateSession(string senderId)
         {
-            var session = GetSession(senderId);
+            var session = FindSession(senderId);
 
             if(session != null)
             {
-                EndSession(session);
+                return session;
             }
 
             var sessionId = Guid.NewGuid().ToString("N").Substring(0, 5);

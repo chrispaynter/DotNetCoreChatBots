@@ -14,6 +14,7 @@ namespace DotNetCoreChatBots
         private FacebookMessengerService _facebookMessengerService;
         private WitAiService _witAiService;
         private ILogger<FacebookWebhookController> _logger;
+        
         public ChatBotHelper(ILogger<FacebookWebhookController> logger, FacebookMessengerService facebookMessengerService, WitAiService witAiService)
         {
             _facebookMessengerService = facebookMessengerService;
@@ -22,6 +23,27 @@ namespace DotNetCoreChatBots
 
             _facebookMessengerService.MessageRecieved += FacebookMessageHandler;
         }
+
+        private async Task<dynamic> Send(WitConverseRequest request, WitConverseResponse response)
+        {
+            var session = WitSessionHelper.FindSession(request.SessionId);
+            if(session == null)
+            {
+                // Throw an error as there's no sender to send to
+            }
+
+            // TODO: Should this be awaited? It's one way, shouldn't matter?
+            _facebookMessengerService.SendTextMessage(session.FacebookSenderId, response.Message);
+
+            // Sending messages is one way from the bot to the user, so context will not be updated
+            return request.Context;
+        }
+
+        private async Task<dynamic> GetForecast(WitConverseRequest request, WitConverseResponse response)
+        {
+            return new { forecast = $"It's going to be sunny!" };
+        }
+
         public async void FacebookMessageHandler(WebhookMessaging messageEvent)
         {
             var senderId = messageEvent.Sender.Id;
@@ -35,22 +57,28 @@ namespace DotNetCoreChatBots
             // Do something with the user's message (e.g. Call out to WitAi)
             // var witResponse = await _witAiService.Message(messageText);
 
-            var session = WitSessionHelper.GetSession(senderId);
-
-            if(session == null)
-            {
-                session = WitSessionHelper.CreateSession(senderId);
-                _logger.LogDebug("Created new Wit session: {senderId} {sessionId}", session.FacebookSenderId, session.WitSessionId);
-            }
+            var session = WitSessionHelper.FindOrCreateSession(senderId);
 
             try
             {
-                await Converse(session, new WitConverseRequest()
-                {
-                    SessionId = session.WitSessionId,
-                    Query = messageText,
-                    Context = session.Context
-                });
+                var actions = new WitActionDictionary();
+                actions.Add(nameof(Send), Send);
+                actions.Add(nameof(GetForecast), GetForecast);
+
+                var request = new WitConverseRequest(session.WitSessionId, messageText, session.Context);
+
+                var context = await _witAiService.RunActions(request, actions);
+
+
+                // Update this user's session state
+                session.Context = context;
+                
+                // await Converse(session, new WitConverseRequest()
+                // {
+                //     SessionId = session.WitSessionId,
+                //     Query = messageText,
+                //     Context = session.Context
+                // });
             }
             catch (WitAiServiceException e)
             {
@@ -107,6 +135,7 @@ namespace DotNetCoreChatBots
                         Context = session.Context
                     });
                     break;
+
                 case "logTime":
 
                     // Log the actual time
