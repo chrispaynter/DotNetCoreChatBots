@@ -22,7 +22,6 @@ namespace DotNetCoreChatBots
             _witAiService = witAiService;
             _witSessionHelper = witSessionHelper;
             _logger = logger;
-
             _facebookMessengerService.MessageRecieved += FacebookMessageHandler;
         }
 
@@ -71,91 +70,13 @@ namespace DotNetCoreChatBots
 
                 var context = await _witAiService.RunActions(request, actions);
 
-
-                // Update this user's session state
+                // Update this user's session context
                 session.Context = context;
-                
-                // await Converse(session, new WitConverseRequest()
-                // {
-                //     SessionId = session.WitSessionId,
-                //     Query = messageText,
-                //     Context = session.Context
-                // });
             }
             catch (WitAiServiceException e)
             {
                 _facebookMessengerService.SendTextMessage(senderId, "I'm new to this AI game and am having a bit of trouble replying to your message right now. I'll get back to you soon once I figure out how to reply to this :)");
             }
-            
-
-            // Reply to the user
-            // _facebookMessengerService.SendTextMessage(senderId, "Hey there!");
-            
-            // if (!string.IsNullOrEmpty(messageText))
-            // {
-            //     var response = await _witAiService.Message(messageText);
-            //     var entities = response.Entities as dynamic;
-            //     var intent = entities.intent[0];
-            //     var intentConfidence = intent.confidence;
-            //     var intentValue = intent.value;
-            // }
         }
-
-        private async Task Converse(WitSession session, WitConverseRequest request)
-        {
-            var response = await _witAiService.Converse(request);
-
-            switch(response.Type)
-            {
-                case WitConverseType.Merge:
-                    break;
-                case WitConverseType.Message:
-                    _facebookMessengerService.SendTextMessage(session.FacebookSenderId, response.Message);
-                    break;
-                case WitConverseType.Action:
-                    await HandleAction(session, response);
-                    break;
-                case WitConverseType.Stop:
-                    // WitSessionHelper.EndSession(session);
-                    break;
-            }
-        }
-
-        private async Task HandleAction(WitSession session, WitConverseResponse response)
-        {
-            switch (response.Action)
-            {
-                case "searchForProject":
-
-                    // Do some search process here
-
-                    session.Context.projectName = "Village Rocs [VC20160511]";
-
-                    await Converse(session, new WitConverseRequest()
-                    {
-                        SessionId = session.WitSessionId,
-                        Context = session.Context
-                    });
-                    break;
-
-                case "logTime":
-
-                    // Log the actual time
-
-                    session.Context.duration = "2.5 hours";
-
-                    await Converse(session, new WitConverseRequest(){
-                        SessionId = session.WitSessionId,
-                        Context = session.Context
-                    });
-                    break;
-            }
-        }
-
-        // private async Task SearchForProject(WitSession session, WitConverseResponse response)
-        // {
-            
-        // }
-
     }
 }

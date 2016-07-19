@@ -33,6 +33,7 @@ namespace DotNetCoreChatBots.Controllers
         [HttpPost("api/facebookwebhook")]
         public void Index([FromBody]WebhookCallback request)
         {
+            // TODO - Validate x-hub-signature field for production to ensure request comes from Facbeook
             _facebookMessengerService.ProcessWebhookRequest(request);
         }
         
