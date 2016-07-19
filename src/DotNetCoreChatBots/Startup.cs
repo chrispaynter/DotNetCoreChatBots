@@ -9,6 +9,8 @@ using Serilog;
 using Microsoft.Extensions.Logging;
 using Paynter.WitAi.Services;
 using Paynter.WitAi.Configuration;
+using Paynter.WitAi.Sessions;
+using DotNetCoreChatBots.Helpers;
 
 namespace DotNetCoreChatBots
 {

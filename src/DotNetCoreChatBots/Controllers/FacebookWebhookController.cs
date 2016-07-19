@@ -1,3 +1,4 @@
+using DotNetCoreChatBots.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Paynter.FacebookMessenger.Models.Webhooks;
@@ -16,6 +17,8 @@ namespace DotNetCoreChatBots.Controllers
             _facebookMessengerService = facebookMessengerService;
             _logger = logger;
             _chatBotHelper = chatBotHelper;
+
+            _chatBotHelper.StartListening();
         }
 
         [HttpGet("api/facebookwebhook")]
