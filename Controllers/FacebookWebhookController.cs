@@ -1,25 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
-using Paynter.WitAi;
+using Microsoft.Extensions.Logging;
 using Paynter.FacebookMessenger.Models.Webhooks;
 using Paynter.FacebookMessenger.Services;
-using Microsoft.Extensions.Logging;
-using Paynter.WitAi.Services;
-using System.Net;
 
 namespace DotNetCoreChatBots.Controllers
 {
     public class FacebookWebhookController : Controller
     {
         private FacebookMessengerService _facebookMessengerService;
-        private WitAiService _witAiService;
         private ILogger<FacebookWebhookController> _logger;
+        private ChatBotHelper _chatBotHelper;
 
-        public FacebookWebhookController(ILogger<FacebookWebhookController> logger, FacebookMessengerService facebookMessengerService, WitAiService witAiService)
+        public FacebookWebhookController(ILogger<FacebookWebhookController> logger, FacebookMessengerService facebookMessengerService, ChatBotHelper chatBotHelper)
         {
             _facebookMessengerService = facebookMessengerService;
-            _witAiService = witAiService;
             _logger = logger;
-            _facebookMessengerService.MessageRecieved += MessageRecieved;
+            _chatBotHelper = chatBotHelper;
         }
 
         [HttpGet("api/facebookwebhook")]
@@ -29,7 +25,7 @@ namespace DotNetCoreChatBots.Controllers
             {
                 return hub.Challenge;
             }
-            _logger.LogInformation("Failed webhook subscription attempt", hub);
+            _logger.LogInformation("Failed webhook subscription attempt - {@request}", hub);
             HttpContext.Response.StatusCode = 403;
             return null;
         }
@@ -39,39 +35,7 @@ namespace DotNetCoreChatBots.Controllers
         {
             _facebookMessengerService.ProcessWebhookRequest(request);
         }
-
-        private async void MessageRecieved(WebhookMessaging messageEvent)
-        {
-            var senderId = messageEvent.Sender.Id;
-            var messageText = messageEvent.Message.Text;
-
-            _facebookMessengerService.SendMarkSeen(senderId);
-
-            // Send typing indicator if response creation takes time
-            _facebookMessengerService.SendTypingOn(senderId);
-
-            // Do something with the user's message (e.g. Call out to WitAi)
-            var witResponse = await _witAiService.Message(messageText);
-
-            // Reply to the user
-            _facebookMessengerService.SendTextMessage(senderId, "Hey there!");
-            
-            // if (!string.IsNullOrEmpty(messageText))
-            // {
-            //     var response = await _witAiService.Message(messageText);
-            //     var entities = response.Entities as dynamic;
-            //     var intent = entities.intent[0];
-            //     var intentConfidence = intent.confidence;
-            //     var intentValue = intent.value;
-            // }
-        }
-
-
-
         
-
-
-
 
 
         // private async Task SendGenericMessage(string recipientId)

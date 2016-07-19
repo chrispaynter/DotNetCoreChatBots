@@ -22,6 +22,7 @@ namespace DotNetCoreChatBots
                             .MinimumLevel.Debug()
                             .Enrich.FromLogContext()
                             .WriteTo.File("log.txt")
+                            .WriteTo.LiterateConsole()
                             .CreateLogger();
             
             var builder = new ConfigurationBuilder()
@@ -38,7 +39,7 @@ namespace DotNetCoreChatBots
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().AddJsonOptions(opt =>{
+            services.AddMvc().AddJsonOptions(opt => {
                 opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
 
@@ -48,6 +49,7 @@ namespace DotNetCoreChatBots
 
             services.AddSingleton<WitAiService, WitAiService>();
             services.AddSingleton<FacebookMessengerService, FacebookMessengerService>();
+            services.AddSingleton<ChatBotHelper, ChatBotHelper>();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
