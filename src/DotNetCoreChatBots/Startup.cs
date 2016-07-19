@@ -47,9 +47,10 @@ namespace DotNetCoreChatBots
             services.Configure<FacebookOptions>(Configuration.GetSection("dotNetCoreFacebookMessenger"));
             services.Configure<WitAiOptions>(Configuration.GetSection("dotNetCoreWitAi"));
 
-            services.AddSingleton<WitAiService, WitAiService>();
+            services.AddSingleton<WitAiService, WitAiService>(); 
             services.AddSingleton<FacebookMessengerService, FacebookMessengerService>();
             services.AddSingleton<ChatBotHelper, ChatBotHelper>();
+            services.AddSingleton<WitSessionHelper, WitSessionHelper>(); // Important this is singleton as it holds cross crequest sessions
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)

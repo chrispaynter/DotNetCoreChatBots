@@ -18,32 +18,37 @@ namespace DotNetCoreChatBots
         public dynamic Context { get; set; }
     }
     
-    public static class WitSessionHelper
+    public class WitSessionHelper
     {
-        private static List<WitSession> _sessions = new List<WitSession>();
+        private List<WitSession> _sessions = new List<WitSession>();
 
-        public static WitSession FindSession(string senderId)
+        public WitSession FindByFacebookUserId(string senderId)
         {
             return _sessions.FirstOrDefault(u => u.FacebookSenderId.Equals(senderId));
         }
 
-        public static WitSession FindOrCreateSession(string senderId)
+        public WitSession FindBySessionId(string sessionId)
         {
-            var session = FindSession(senderId);
+            return _sessions.FirstOrDefault(u => u.WitSessionId.Equals(sessionId));
+        }
+
+        public WitSession FindOrCreateSession(string facebookSenderId)
+        {
+            var session = FindByFacebookUserId(facebookSenderId);
 
             if(session != null)
             {
                 return session;
             }
 
-            var sessionId = Guid.NewGuid().ToString("N").Substring(0, 5);
-            session = new WitSession(senderId, sessionId);
+            var sessionId = Guid.NewGuid().ToString("N");
+            session = new WitSession(facebookSenderId, sessionId);
             _sessions.Add(session);
             
             return session;
         }
 
-        public static void EndSession(WitSession session)
+        public void EndSession(WitSession session)
         {
             _sessions.Remove(session);
         }

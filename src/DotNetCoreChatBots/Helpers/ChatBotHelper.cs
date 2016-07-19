@@ -13,12 +13,14 @@ namespace DotNetCoreChatBots
     {
         private FacebookMessengerService _facebookMessengerService;
         private WitAiService _witAiService;
+        private WitSessionHelper _witSessionHelper;
         private ILogger<FacebookWebhookController> _logger;
         
-        public ChatBotHelper(ILogger<FacebookWebhookController> logger, FacebookMessengerService facebookMessengerService, WitAiService witAiService)
+        public ChatBotHelper(ILogger<FacebookWebhookController> logger, FacebookMessengerService facebookMessengerService, WitAiService witAiService, WitSessionHelper witSessionHelper)
         {
             _facebookMessengerService = facebookMessengerService;
             _witAiService = witAiService;
+            _witSessionHelper = witSessionHelper;
             _logger = logger;
 
             _facebookMessengerService.MessageRecieved += FacebookMessageHandler;
@@ -26,7 +28,7 @@ namespace DotNetCoreChatBots
 
         private async Task<dynamic> Send(WitConverseRequest request, WitConverseResponse response)
         {
-            var session = WitSessionHelper.FindSession(request.SessionId);
+            var session = _witSessionHelper.FindBySessionId(request.SessionId);
             if(session == null)
             {
                 // Throw an error as there's no sender to send to
@@ -57,7 +59,7 @@ namespace DotNetCoreChatBots
             // Do something with the user's message (e.g. Call out to WitAi)
             // var witResponse = await _witAiService.Message(messageText);
 
-            var session = WitSessionHelper.FindOrCreateSession(senderId);
+            var session = _witSessionHelper.FindOrCreateSession(senderId);
 
             try
             {
