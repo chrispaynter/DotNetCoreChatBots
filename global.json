@@ -1,5 +1,5 @@
 {
-  "projects": [ "src", "lib/DotNetCoreWitAi/src", "lib/DotNetCoreFacebookMessenger/src" ],
+  "projects": [ "src", "lib/DotNetCoreWitAi/src", "lib/DotNetCoreFacebookMessenger/src", "lib/DotNetCoreHarvest/src" ],
   "sdk": {
     "version": "1.0.0"
   }

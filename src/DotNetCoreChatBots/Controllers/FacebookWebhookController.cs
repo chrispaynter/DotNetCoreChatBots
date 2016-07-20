@@ -1,8 +1,10 @@
+using System.Threading.Tasks;
 using DotNetCoreChatBots.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Paynter.FacebookMessenger.Models.Webhooks;
 using Paynter.FacebookMessenger.Services;
+using Paynter.Harvest.Services;
 
 namespace DotNetCoreChatBots.Controllers
 {
@@ -11,12 +13,14 @@ namespace DotNetCoreChatBots.Controllers
         private FacebookMessengerService _facebookMessengerService;
         private ILogger<FacebookWebhookController> _logger;
         private ChatBotHelper _chatBotHelper;
+        private HarvestService _harvestService;
 
-        public FacebookWebhookController(ILogger<FacebookWebhookController> logger, FacebookMessengerService facebookMessengerService, ChatBotHelper chatBotHelper)
+        public FacebookWebhookController(ILogger<FacebookWebhookController> logger, FacebookMessengerService facebookMessengerService, ChatBotHelper chatBotHelper, HarvestService harvestService)
         {
             _facebookMessengerService = facebookMessengerService;
             _logger = logger;
             _chatBotHelper = chatBotHelper;
+            _harvestService = harvestService;
 
             _chatBotHelper.StartListening();
         }
@@ -38,6 +42,13 @@ namespace DotNetCoreChatBots.Controllers
         {
             // TODO - Validate x-hub-signature field for production to ensure request comes from Facbeook
             _facebookMessengerService.ProcessWebhookRequest(request);
+        }
+
+        [HttpGet("api/harvesttest")]
+        public async Task<dynamic> HarvestTest()
+        {
+            var projects = await _harvestService.Projects();
+            return projects;
         }
         
 

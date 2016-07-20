@@ -4,3 +4,6 @@
 [submodule "lib/DotNetCoreWitAi"]
 	path = lib/DotNetCoreWitAi
 	url = git@github.com:chrispaynter/DotNetCoreWitAi.git
+[submodule "lib/DotNetCoreHarvest"]
+	path = lib/DotNetCoreHarvest
+	url = git@github.com:chrispaynter/DotNetCoreHarvest.git

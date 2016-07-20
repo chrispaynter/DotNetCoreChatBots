@@ -30,6 +30,7 @@
         "Newtonsoft.Json": "9.0.1",
         "DotNetCoreWitAi": "1.0.0-*",
         "DotNetCoreFacebookMessenger": "1.0.0-*",
+        "DotNetCoreHarvest": "1.0.0-*",
         "Serilog": "2.0.0",
         "Serilog.Extensions.Logging": "1.0.0",
         "Serilog.Sinks.RollingFile": "2.1.0",

@@ -10,7 +10,9 @@ using Microsoft.Extensions.Logging;
 using Paynter.WitAi.Services;
 using Paynter.WitAi.Configuration;
 using Paynter.WitAi.Sessions;
+using Paynter.Harvest.Configuration;
 using DotNetCoreChatBots.Helpers;
+using Paynter.Harvest.Services;
 
 namespace DotNetCoreChatBots
 {
@@ -48,11 +50,14 @@ namespace DotNetCoreChatBots
             services.AddOptions();
             services.Configure<FacebookOptions>(Configuration.GetSection("dotNetCoreFacebookMessenger"));
             services.Configure<WitAiOptions>(Configuration.GetSection("dotNetCoreWitAi"));
+            services.Configure<HarvestOptions>(Configuration.GetSection("dotNetCoreHarvest"));
 
             services.AddSingleton<WitAiService, WitAiService>(); 
             services.AddSingleton<FacebookMessengerService, FacebookMessengerService>();
             services.AddSingleton<ChatBotHelper, ChatBotHelper>();
             services.AddSingleton<WitSessionHelper, WitSessionHelper>(); // Important this is singleton as it holds cross crequest sessions
+            services.AddSingleton<HarvestService, HarvestService>();
+            services.AddSingleton<HarvestDataHelper, HarvestDataHelper>();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
