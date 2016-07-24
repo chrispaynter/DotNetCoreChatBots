@@ -1,4 +1,2 @@
 # .NET Core Chat Bots
-A simple .NET Core example of a Facebook Messenger chat bot using Wit.AI
-
-Created to demonstrate usage of [DotNetCoreFacebookMessenger](https://github.com/chrispaynter/DotNetCoreFacebookMessenger) and [DotNetCoreWitAi](https://github.com/chrispaynter/DotNetCoreWitAi)
+A scratch pad project being used to develop and demonstrate usage of of [DotNetCoreFacebookMessenger](https://github.com/chrispaynter/DotNetCoreFacebookMessenger), [DotNetCoreWitAi](https://github.com/chrispaynter/DotNetCoreWitAi) and [DotNetCoreApiAi](https://github.com/chrispaynter/DotNetCoreApiAi)
