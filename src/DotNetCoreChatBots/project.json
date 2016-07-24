@@ -5,12 +5,16 @@
     "emitEntryPoint": true,
     "preserveCompilationContext": true
   },
+  "publishOptions":{
+    "include":[
+      "appsettings.json"
+    ]
+  },
   "userSecretsId": "dotnetcorechatbotssecrets",
   "dependencies": {},
   "tools": {
     "Microsoft.Extensions.SecretManager.Tools": "1.0.0-preview2-final"
   },
-  
   "frameworks": {
     "netcoreapp1.0": {
       "dependencies": {
@@ -31,10 +35,11 @@
         "DotNetCoreWitAi": "1.0.0-*",
         "DotNetCoreFacebookMessenger": "1.0.0-*",
         "DotNetCoreHarvest": "1.0.0-*",
+        "DotNetCoreApiAi": "1.0.0-*",
         "Serilog": "2.0.0",
         "Serilog.Extensions.Logging": "1.0.0",
         "Serilog.Sinks.RollingFile": "2.1.0",
-        "Serilog.Sinks.Literate": "2.0.0"
+        "Serilog.Exceptions": "2.0.0"
       },
       "imports": "dnxcore50"
     }

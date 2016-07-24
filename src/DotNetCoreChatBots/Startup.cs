@@ -13,6 +13,9 @@ using Paynter.WitAi.Sessions;
 using Paynter.Harvest.Configuration;
 using DotNetCoreChatBots.Helpers;
 using Paynter.Harvest.Services;
+using Serilog.Exceptions;
+using System;
+using System.IO;
 
 namespace DotNetCoreChatBots
 {
@@ -24,16 +27,15 @@ namespace DotNetCoreChatBots
         {
             Log.Logger = new LoggerConfiguration()
                             .MinimumLevel.Debug()
-                            .Enrich.FromLogContext()
-                            .WriteTo.File("log.txt")
-                            .WriteTo.LiterateConsole()
+                            .Enrich.WithExceptionDetails()
+                            .WriteTo.RollingFile("logs/{Date}.log", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fffzzz} [{Level}] {Message}{NewLine}{Exception}")
                             .CreateLogger();
-            
+
             var builder = new ConfigurationBuilder()
-                                .SetBasePath(env.ContentRootPath + "/src/DotNetCoreChatBots")
+                                .SetBasePath(env.ContentRootPath)
                                 .AddJsonFile("appsettings.json");
 
-            if(env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 builder.AddUserSecrets();
             }
@@ -43,7 +45,8 @@ namespace DotNetCoreChatBots
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().AddJsonOptions(opt => {
+            services.AddMvc().AddJsonOptions(opt =>
+            {
                 opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
 
@@ -52,7 +55,7 @@ namespace DotNetCoreChatBots
             services.Configure<WitAiOptions>(Configuration.GetSection("dotNetCoreWitAi"));
             services.Configure<HarvestOptions>(Configuration.GetSection("dotNetCoreHarvest"));
 
-            services.AddSingleton<WitAiService, WitAiService>(); 
+            services.AddSingleton<WitAiService, WitAiService>();
             services.AddSingleton<FacebookMessengerService, FacebookMessengerService>();
             services.AddSingleton<ChatBotHelper, ChatBotHelper>();
             services.AddSingleton<WitSessionHelper, WitSessionHelper>(); // Important this is singleton as it holds cross crequest sessions
@@ -65,6 +68,14 @@ namespace DotNetCoreChatBots
             loggerFactory.AddSerilog();
             app.UseMvc();
         }
+
+        private void WriteEnvironmentDetails(IHostingEnvironment env)
+        {
+            Console.WriteLine($@"
+            IHostingEnvironment:
+                App Name:       {env.ApplicationName}
+                Content Root Path:    {env.ContentRootPath}
+                Web Root Path:    {env.WebRootPath}");
+        }
     }
 }
-    

@@ -9,7 +9,7 @@ namespace DotNetCoreChatBots
         public static void Main(string[] args)
         {
             var currentDir = Directory.GetCurrentDirectory();
-            
+
             var host = new WebHostBuilder()
                             .UseContentRoot(Directory.GetCurrentDirectory())
                             .UseKestrel()

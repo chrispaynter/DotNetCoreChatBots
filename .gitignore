@@ -24,6 +24,7 @@ _UpgradeReport_Files/
 ###############
 bin/
 obj/
+logs/
 TestResults/
 ###################
 # Web publish log #
@@ -77,3 +78,5 @@ _[Ss]cripts
 
 log.txt
 project.lock.json
+
+api.log

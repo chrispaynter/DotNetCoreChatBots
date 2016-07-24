@@ -29,6 +29,10 @@ namespace DotNetCoreChatBots.Helpers
             _witSessionHelper = witSessionHelper;
             _logger = logger;
             _harvestDataHelper = harvestDataHelper;
+
+            // This is done here but ultimately will be done on a scheudle
+            // probably once or twice a day.
+            _harvestDataHelper.RefreshProjectsList();
         }
 
         public void StartListening()
@@ -117,16 +121,17 @@ namespace DotNetCoreChatBots.Helpers
 
         private async Task<dynamic> FindProject(WitConverseRequest request, WitConverseResponse response)
         {
-            var possibleProjects = _harvestDataHelper.QueryProjectsByName(response.Message);
+            var project = response.GetFirstEntityValue("project");
+            var possibleProjects = await _harvestDataHelper.QueryProjectsByName(project);
             var count = possibleProjects.Count();
 
             if(count > 1)
             {
-                return new { projects = possibleProjects };
+                return new { projects = possibleProjects.Select(u => string.Join(u.Name, ",")) };
             }
             else if(count == 1)
             {
-                return new { project = possibleProjects.FirstOrDefault() };
+                return new { project = possibleProjects.FirstOrDefault().Name };
             } 
             else
             {

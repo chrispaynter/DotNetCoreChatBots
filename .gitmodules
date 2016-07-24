@@ -7,3 +7,6 @@
 [submodule "lib/DotNetCoreHarvest"]
 	path = lib/DotNetCoreHarvest
 	url = git@github.com:chrispaynter/DotNetCoreHarvest.git
+[submodule "lib/DotNetCoreApiAi"]
+	path = lib/DotNetCoreApiAi
+	url = git@github.com:chrispaynter/DotNetCoreApiAi.git

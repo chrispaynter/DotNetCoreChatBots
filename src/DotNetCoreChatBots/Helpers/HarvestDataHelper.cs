@@ -22,9 +22,26 @@ namespace DotNetCoreChatBots
             Projects = results.ToList();
         }
 
-        public IEnumerable<HarvestProject> QueryProjectsByName(string query)
+        public async Task<IEnumerable<HarvestProject>> QueryProjectsByName(string query)
         {
+            await CheckDataLoaded();
+
             return Projects.Where(u => u.Name.ToLower().Contains(query.ToLower()));
+        }
+
+        public async Task<HarvestProject> GetProjectById(string id)
+        {
+            await CheckDataLoaded();
+
+            return Projects.FirstOrDefault(u => u.Id == id);
+        }
+
+        public async Task CheckDataLoaded()
+        {
+            if(Projects == null || !Projects.Any())
+            {
+                await RefreshProjectsList();
+            }
         }
     }
 }
