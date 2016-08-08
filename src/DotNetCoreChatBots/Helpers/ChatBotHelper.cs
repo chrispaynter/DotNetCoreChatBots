@@ -122,7 +122,7 @@ namespace DotNetCoreChatBots.Helpers
         private async Task<dynamic> FindProject(WitConverseRequest request, WitConverseResponse response)
         {
             var project = response.GetFirstEntityValue("project");
-            var possibleProjects = await _harvestDataHelper.QueryProjectsByName(project);
+            var possibleProjects = _harvestDataHelper.QueryProjectsByName(project);
             var count = possibleProjects.Count();
 
             if(count > 1)
@@ -140,40 +140,5 @@ namespace DotNetCoreChatBots.Helpers
         } 
 
                
-    }
-
-    public class TestWitActions
-    {
-        private WitSessionHelper _witSessionHelper;
-        private FacebookMessengerService _facebookMessengerService;
-
-        public TestWitActions(WitSessionHelper witSessionHelper, FacebookMessengerService facebookMessengerService)
-        {
-            _witSessionHelper = witSessionHelper;
-
-        }
-
-        [WitAiAction]
-        private async Task<dynamic> Send(WitConverseRequest request, WitConverseResponse response)
-        {
-            var session = _witSessionHelper.FindBySessionId(request.SessionId);
-            if(session == null)
-            {
-                // Throw an error as there's no sender to send to
-            }
-
-            // TODO: Should this be awaited? It's one way, shouldn't matter?
-            _facebookMessengerService.SendTextMessage(session.UserId, response.Message);
-
-            // Sending messages is one way from the bot to the user, so context will not be updated
-            return request.Context;
-        }
-
-        [WitAiAction]
-        private async Task<dynamic> GetForecast(WitConverseRequest request, WitConverseResponse response)
-        {
-
-            return new { forecast = $"sunny 32 degrees" };
-        } 
     }
 }

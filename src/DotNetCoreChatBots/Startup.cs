@@ -15,7 +15,6 @@ using DotNetCoreChatBots.Helpers;
 using Paynter.Harvest.Services;
 using Serilog.Exceptions;
 using System;
-using System.IO;
 
 namespace DotNetCoreChatBots
 {
@@ -41,6 +40,8 @@ namespace DotNetCoreChatBots
             }
 
             Configuration = builder.Build();
+
+
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -54,6 +55,8 @@ namespace DotNetCoreChatBots
             services.Configure<FacebookOptions>(Configuration.GetSection("dotNetCoreFacebookMessenger"));
             services.Configure<WitAiOptions>(Configuration.GetSection("dotNetCoreWitAi"));
             services.Configure<HarvestOptions>(Configuration.GetSection("dotNetCoreHarvest"));
+            services.Configure<LifxOptions>(Configuration.GetSection("lifx"));
+            services.Configure<LogTimeChatBotOptions>(Configuration.GetSection("logTimeChatBot"));
 
             services.AddSingleton<WitAiService, WitAiService>();
             services.AddSingleton<FacebookMessengerService, FacebookMessengerService>();
@@ -61,12 +64,21 @@ namespace DotNetCoreChatBots
             services.AddSingleton<WitSessionHelper, WitSessionHelper>(); // Important this is singleton as it holds cross crequest sessions
             services.AddSingleton<HarvestService, HarvestService>();
             services.AddSingleton<HarvestDataHelper, HarvestDataHelper>();
+            services.AddSingleton<LogTimeChatBotActions, LogTimeChatBotActions>();
+            services.AddSingleton<LifxHelper, LifxHelper>();
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             loggerFactory.AddSerilog();
             app.UseMvc();
+
+
+            // Kick off the initial data load
+            var harvestService = serviceProvider.GetService<HarvestDataHelper>();
+            harvestService.RefreshPeopleList();
+            harvestService.RefreshProjectsList();
+            harvestService.RefreshTasks();
         }
 
         private void WriteEnvironmentDetails(IHostingEnvironment env)
